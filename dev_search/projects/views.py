@@ -1,25 +1,7 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from .models import Project
-
+from .forms import ProjectForm
 # Create your views here.
-
-projects_list = [
-    {
-        "id": "1",
-        "title": "Ecommerce Website",
-        "description": "Fully functional ecommerce website",
-    },
-    {
-        "id": "2",
-        "title": "Portfolio Website",
-        "description": "A personal website to write articles and display work",
-    },
-    {
-        "id": "3",
-        "title": "Social Network",
-        "description": "An open source project built by the community",
-    },
-]
 
 def search(pk, project_list):
     return [element for element in project_list if element["id"]==pk]
@@ -34,3 +16,15 @@ def project(request, pk):
     tags = project_obj.tags.all()
     context = {"project":project_obj, "tags": tags}
     return render(request, "projects/single-project.html", context)
+
+def create_project(request):
+    form = ProjectForm()
+
+    if request.method == "POST":
+        form = ProjectForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('projects')
+
+    context = {"form":form}
+    return render(request, 'projects/project-form.html', context)

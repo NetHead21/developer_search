@@ -15,7 +15,7 @@ def project(request, pk):
     project_obj = Project.objects.get(id=pk)
     tags = project_obj.tags.all()
     context = {"project":project_obj, "tags": tags}
-    return render(request, "projects/single-project.html", context)
+    return render(request, "projects/single_project.html", context)
 
 def create_project(request):
     form = ProjectForm()
@@ -28,3 +28,25 @@ def create_project(request):
 
     context = {"form":form}
     return render(request, 'projects/project-form.html', context)
+
+def update_project(request, pk):
+    project = Project.objects.get(id=pk)
+    form = ProjectForm(instance=project)
+
+    if request.method == "POST":
+        form = ProjectForm(request.POST, instance=project)
+        if form.is_valid():
+            form.save()
+            return redirect('projects')
+
+    context = {"form":form}
+    return render(request, 'projects/project-form.html', context)
+
+
+def delete_project(request, pk):
+    project = Project.objects.get(id=pk)
+    if request.method == "POST":
+        project.delete()
+        return redirect("projects")
+    context = {"object":project}
+    return render(request, "projects/delete_template.html", context)

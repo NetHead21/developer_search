@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from .models import Project
 
 # Create your views here.
 
@@ -24,14 +25,12 @@ def search(pk, project_list):
     return [element for element in project_list if element["id"]==pk]
 
 def projects(request):
-    page = "projects"
-    number = 1
-    context = {"page":page, "number": number, "projects": projects_list}
+    projects_list = Project.objects.all()
+    context = {"projects": projects_list}
     return render(request, "projects/projects.html", context)
 
 def project(request, pk):
-    project_obj = None
-    context = None
-    if search(pk, projects_list):
-        context = {"project": search(pk, projects_list)[0]}
+    project_obj = Project.objects.get(id=pk)
+    tags = project_obj.tags.all()
+    context = {"project":project_obj, "tags": tags}
     return render(request, "projects/single-project.html", context)

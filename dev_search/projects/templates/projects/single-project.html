@@ -4,6 +4,12 @@
     {% if project %}
         <h1>{{ project.title }}</h1>
         <br>
+        <hr>
+        {% for tag in tags %}
+            <span style="border:1px solid gray" >{{ tag }}</span>
+        {% endfor %}
+        <hr>
+
         <p>{{ project.description }}</p>
     {% else %}
         <p>Project doesn't exist yet.</p>

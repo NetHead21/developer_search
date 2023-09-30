@@ -1,7 +1,10 @@
 from django.shortcuts import render, redirect
-from .models import Project
+from django.db.models import Q
+from .models import Project, Tag
 from .forms import ProjectForm
 from django.contrib.auth.decorators import login_required
+
+from .utils import search_projects
 
 
 # Create your views here.
@@ -12,8 +15,8 @@ def search(pk, project_list):
 
 
 def projects(request):
-    projects_list = Project.objects.all()
-    context = {"projects": projects_list}
+    projects, search_query = search_projects(request)
+    context = {"projects": projects, "search_query": search_query}
     return render(request, "projects/projects.html", context)
 
 

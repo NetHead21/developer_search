@@ -1,22 +1,24 @@
 from django.shortcuts import render, redirect
-from django.db.models import Q
-from .models import Project, Tag
+from .models import Project
 from .forms import ProjectForm
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator
 
-from .utils import search_projects
-
-
-# Create your views here.
-
-
-def search(pk, project_list):
-    return [element for element in project_list if element["id"] == pk]
+from .utils import search_projects, get_range_paginator
 
 
 def projects(request):
     projects, search_query = search_projects(request)
-    context = {"projects": projects, "search_query": search_query}
+    paginator = Paginator(projects, 3)  # set the project results into 3
+
+    custom_range, projects = get_range_paginator(request, paginator)
+
+    context = {
+        "projects": projects,
+        "search_query": search_query,
+        "paginator": paginator,
+        "custom_range": custom_range,
+    }
     return render(request, "projects/projects.html", context)
 
 
@@ -36,13 +38,17 @@ def create_project(request):
     if request.method == "POST":
         form = ProjectForm(request.POST, request.FILES)
         if form.is_valid():
-            project = form.save(commit=False)
-            project.owner = profile
-            project.save()
-            return redirect("account")
+            return save_project(form, profile)
 
     context = {"form": form}
     return render(request, "projects/project_form.html", context)
+
+
+def save_project(form, profile):
+    project = form.save(commit=False)
+    project.owner = profile
+    project.save()
+    return redirect("account")
 
 
 @login_required(login_url="login")

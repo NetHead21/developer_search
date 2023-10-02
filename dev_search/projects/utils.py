@@ -1,5 +1,7 @@
+from django.core.paginator import PageNotAnInteger, EmptyPage
 from django.db.models import Q
-from .models import Project, Tag
+
+from .models import Tag, Project
 
 
 def search_projects(request):
@@ -17,3 +19,35 @@ def search_projects(request):
     )
 
     return projects, search_query
+
+
+def get_page(request) -> int:
+    return request.GET.get("page") or 1
+
+
+def get_range(page, paginator):
+    left_index = int(page) - 4
+    left_index = max(left_index, 1)
+
+    right_index = int(page) + 5
+    if right_index > paginator.num_pages:
+        right_index = paginator.num_pages + 1
+
+    return range(left_index, right_index)
+
+
+def get_paginator(page, paginator):
+    try:
+        projects = paginator.page(page)
+    except PageNotAnInteger:
+        page = 1
+        projects = paginator.page(page)
+    except EmptyPage:
+        page = paginator.num_pages
+        projects = paginator.page(page)
+    return projects
+
+
+def get_range_paginator(request, paginator):
+    page = get_page(request)
+    return get_range(page, paginator), get_paginator(page, paginator)

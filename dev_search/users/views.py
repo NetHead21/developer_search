@@ -1,12 +1,13 @@
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, redirect
-from django.contrib.auth import login, authenticate, logout
-from django.contrib.auth.models import User
-from django.db.models import Q
-from .models import Profile, Skill
 from django.contrib import messages
+from django.contrib.auth import login, authenticate, logout
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
+from django.core.paginator import Paginator
+from django.shortcuts import render, redirect
+
 from .forms import CustomUserCreationForm, ProfileForm, SkillForm
-from .utils import search_profiles
+from .models import Profile
+from .utils import search_profiles, get_range_paginator
 
 
 def login_user(request):
@@ -70,7 +71,14 @@ def create_user(form, request):
 # Create your views here.
 def profiles(request):
     user_profiles, search_query = search_profiles(request)
-    context = {"user_profiles": user_profiles, "search_query": search_query}
+    paginator = Paginator(user_profiles, 3)
+    custom_range, profiles = get_range_paginator(request, paginator)
+    context = {
+        "user_profiles": user_profiles,
+        "search_query": search_query,
+        "custom_range": custom_range,
+        "profiles": profiles,
+    }
     return render(request, "users/profiles.html", context)
 
 

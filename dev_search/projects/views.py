@@ -9,7 +9,7 @@ from .utils import search_projects, get_range_paginator
 
 def projects(request):
     projects, search_query = search_projects(request)
-    paginator = Paginator(projects, 3)  # set the project results into 3
+    paginator = Paginator(projects, 6)  # set the project results into 6
 
     custom_range, projects = get_range_paginator(request, paginator)
 

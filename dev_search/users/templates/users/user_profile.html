@@ -11,7 +11,10 @@
                             <h2 class="dev__name">{{ profile.name }}</h2>
                             <p class="dev__title">{{ profile.short_intro }}</p>
                             <p class="dev__location">Based in {{ profile.location }}</p>
-                            <a href="#" class="btn btn--sub btn--lg">Send Message </a>
+
+                            {% if request.user.profile.id != profile.id %}
+                                <a href="{% url 'create-message' profile.id %}" class="btn btn--sub btn--lg">Send Message </a>
+                            {% endif %}
                             <ul class="dev__social">
                                 {% if profile.social_github %}
                                     <li>

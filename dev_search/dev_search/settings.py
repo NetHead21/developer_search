@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/4.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
-import os.path
+import os
 from pathlib import Path
 
 # from django.core.management.commands.runserver import Command as rs
@@ -118,6 +118,17 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
+
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+# EMAIL_HOST = "smtp-mail.outlook.com"
+EMAIL_HOST = "smtp.gmail.com"
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+# EMAIL_HOST_USER = os.environ.get("OUTLOOK_EMAIL")
+# EMAIL_HOST_PASSWORD = os.environ.get("OUTLOOK_PASSWORD")
+
+EMAIL_HOST_USER = "junivensaavedra.test@gmail.com"
+EMAIL_HOST_PASSWORD = "skhaoadtonfuheiv"
 
 STATIC_URL = "static/"
 MEDIA_URL = "/images/"
